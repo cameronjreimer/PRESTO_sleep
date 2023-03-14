@@ -13,7 +13,7 @@ library(lubridate)
 library(dplyr)
 library(labelled)
 #load in data
-load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed.RData")
+load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RData")
 ```
 
 ```{r}
@@ -34,9 +34,13 @@ var_label(data$ct_lths) <- "Census tract - LTHS"
 var_label(data$ct_urban_cat) <- "Census tract - Urban"
 var_label(data$pss_score) <- "PSS"
 var_label(data$b_mdi_score) <- "MDI" 
+var_label(data$b_hourssleep) <- "Hours slept / night"
+var_label(data$b_currentjob) <- "Currently Employed"
+var_label(data$b_jobhrsperweek) <- "Hours worked /week"
+var_label(data$exercise) <- "Hours of exercise / week"
 # Assign variables for table one 
-myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "pss_score", "b_mdi_score")
-catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat")
+myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "exercise", "b_currentjob", "b_jobhrsperweek")
+catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat", "b_currentjob")
 ```
 
 
