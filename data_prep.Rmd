@@ -26,7 +26,8 @@ data_full <- read_sas("ndvi_mental_001.sas7bdat")
 years <- 2012:2019
 buffers <- c(50,100,250,500)
 
-#format exercise data
+#format exercise data 
+#FOR FUTURE REFERENCE ###### If all exercise types are NA in one row, final value is NA. If at least one is NOT NA, all other NAs in that row should be 0. TAKE THE SUM OF ALL non-NAs.
 data_full$exercise <- data_full$b_walkexer + data_full$b_bike + data_full$b_jogswimraq + data_full$b_aerobics + data_full$b_freeweights + data_full$b_yoga
 
 #select important columns
@@ -65,7 +66,7 @@ data_final <- data_final %>%
   mutate(ct_HHinc_quantile = ntile(ct_HHinc, 3))
 
 #turn variables into factors 
-factor_vars <- c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", names(data_final[grep("quantile", names(data_final))]))
+factor_vars <- c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob", names(data_final[grep("quantile", names(data_final))]))
 data_final[factor_vars] <- lapply(data_final[factor_vars], factor)
 ```
 
