@@ -48,7 +48,7 @@ catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urba
 
 ```{r}
 buffer <- "100"
-ndvi_measure <- "amax"
+ndvi_measure <- "smax"
 quantiles <- paste0("ndvi_", buffer, "_", ndvi_measure, "_iqr_quantile")
 #Stratified by greenness quartiles 
 tab1_100 <- CreateTableOne(vars = myVars, strata = quantiles, data = data, factorVars = catVars, test = FALSE)
@@ -61,7 +61,7 @@ print(tab1_100_overall, formatOptions = list(big.mark = ","), varLabels = TRUE, 
 ```{r}
 #export 
 table1t <- print(tab1_100, exact = "stage", quote = FALSE, noSpaces = TRUE, printToggle = FALSE, varLabels = TRUE, dropEqual = TRUE)
-write.csv(table1t, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO/table1.csv")
+write.csv(table1t, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO_sleep/table1.csv")
 table1t <- print(tab1_100_overall, exact = "stage", quote = FALSE, noSpaces = TRUE, printToggle = FALSE, varLabels = TRUE, dropEqual = TRUE)
-write.csv(table1t, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO/table1_overall.csv")
+write.csv(table1t, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO_sleep/table1_overall.csv")
 ```
