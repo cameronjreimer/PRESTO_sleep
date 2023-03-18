@@ -28,10 +28,10 @@ buffers <- c(50,100,250,500)
 
 #format exercise data 
 #FOR FUTURE REFERENCE ###### If all exercise types are NA in one row, final value is NA. If at least one is NOT NA, all other NAs in that row should be 0. TAKE THE SUM OF ALL non-NAs.
-data_full$exercise <- data_full$b_walkexer + data_full$b_bike + data_full$b_jogswimraq + data_full$b_aerobics + data_full$b_freeweights + data_full$b_yoga
+#data_full$exercise <- data_full$b_walkexer + data_full$b_bike + data_full$b_jogswimraq + data_full$b_aerobics + data_full$b_freeweights + data_full$b_yoga
 
 #select important columns
-data = data_full[c("StudyID", "Country", "ageatqstn", "b_race_ethnic_census", "b_educ", "b_income", "ct_HHinc", "ct_lths", "ct_urban", "pss_score", "b_mdi_score",  "b_finisheddate", "b_hourssleep", "b_currentjob", "b_jobhrsperweek","exercise", generate_all_ndvi_colnames(years,buffers))]
+data = data_full[c("StudyID", "Country", "ageatqstn", "b_race_ethnic_census", "b_educ", "b_income", "ct_HHinc", "ct_lths", "ct_urban", "pss_score", "b_mdi_score",  "b_finisheddate", "b_hourssleep", "b_currentjob", "b_jobhrsperweek", generate_all_ndvi_colnames(years,buffers))]
 rm(data_full)
 
 #get NDVI - This may take a while
@@ -39,6 +39,8 @@ data <- add_ndvi(data, id_colname = "StudyID", date_colname = "b_finisheddate", 
 
 #categorize ct_urban
 data <- add_urban_cat(data)
+#add binary outcome 
+data$hrssleep_cat <- data$b_hourssleep >= 7 
 ```
 
 ```{r Check for missingness}
@@ -66,7 +68,7 @@ data_final <- data_final %>%
   mutate(ct_HHinc_quantile = ntile(ct_HHinc, 3))
 
 #turn variables into factors 
-factor_vars <- c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob", names(data_final[grep("quantile", names(data_final))]))
+factor_vars <- c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob", "hrssleep_cat", names(data_final[grep("quantile", names(data_final))]))
 data_final[factor_vars] <- lapply(data_final[factor_vars], factor)
 ```
 

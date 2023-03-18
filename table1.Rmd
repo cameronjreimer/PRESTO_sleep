@@ -37,10 +37,12 @@ var_label(data$b_mdi_score) <- "MDI"
 var_label(data$b_hourssleep) <- "Hours slept / night"
 var_label(data$b_currentjob) <- "Currently Employed"
 var_label(data$b_jobhrsperweek) <- "Hours worked /week"
-var_label(data$exercise) <- "Hours of exercise / week"
+#var_label(data$exercise) <- "Hours of exercise / week"
+var_label(data$hrssleep_cat) <- ">= 7hrs of sleep/night"
+
 # Assign variables for table one 
-myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "exercise", "b_currentjob", "b_jobhrsperweek")
-catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat", "b_currentjob")
+myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "exercise", "b_currentjob", "b_jobhrsperweek", "hrssleep_cat")
+catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat", "b_currentjob", "hrssleep_cat")
 ```
 
 
