@@ -1,0 +1,95 @@
+---
+title: "splines"
+author: "Cam Reimer"
+date: "2023-03-18"
+output: html_document
+---
+
+```{r}
+#load in packages 
+library(tableone)
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(labelled)
+library(mgcv)
+#load in data
+load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RData")
+```
+```{r}
+model1<- gam(b_hourssleep ~ s(ndvi_100_smax_iqr, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = rural, na.action=na.omit )
+plot(model1, las=1, ylab="Hours Slept", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+
+```
+
+### OLD CODE AFTER THIS POINT
+
+
+
+
+
+#Full sample, PSS and MDI, 100m buffer
+```{r}
+par(mfrow = c(1,2))
+
+model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = data, na.action=na.omit )
+plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("PSS", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+model2<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = data, na.action=na.omit )
+plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("MDI", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+summary(model1)
+```
+
+#Full sample, PSS, 100m buffer, Stratified by NSES
+```{r}
+par(mfrow = c(1,3))
+
+
+model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES1, na.action=na.omit )
+#summary(model1)
+plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("Low NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income +  ct_lths , data = ctSES2, na.action=na.omit )
+#summary(model1)
+plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("Medium NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES3, na.action=na.omit )
+#summary(model1)
+plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("High NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
+```
+
+#Full sample, MDI, 100m buffer, Stratified by NSES
+```{r}
+par(mfrow = c(1,3))
+
+
+model1<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES1, na.action=na.omit )
+#summary(model1)
+plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("Low NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+model1<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income +  ct_lths , data = ctSES2, na.action=na.omit )
+#summary(model1)
+plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("Medium NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+model1<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES3, na.action=na.omit )
+#summary(model1)
+plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
+legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("High NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
+```
