@@ -16,11 +16,50 @@ library(mgcv)
 #load in data
 load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RData")
 ```
+
 ```{r}
 model1<- gam(b_hourssleep ~ s(ndvi_100_smax_iqr, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = rural, na.action=na.omit )
-plot(model1, las=1, ylab="Hours Slept", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+#plot(model1, las=1, ylab="Hours Slept", xlab= "Green space")
+#legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
 
+summary(model1)
+```
+
+#Exploratory analysis - Logistic regression
+```{r}
+df <- data
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model1 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census, data = df, family = "binomial")
+summary(model1)
+```
+
+```{r}
+df <- data 
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model2 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_educ + b_income, data = df, family = "binomial")
+summary(model2)
+
+```
+
+```{r}
+df <- data 
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model3 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths, data = df, family = "binomial")
+summary(model3)
+```
+
+```{r}
+df <- data
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model4 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek, data = df, family = "binomial")
+summary(model4)
+```
+
+```{r}
+df <- data
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model5 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income, data = df, family = "binomial")
+summary(model5)
 ```
 
 ### OLD CODE AFTER THIS POINT
