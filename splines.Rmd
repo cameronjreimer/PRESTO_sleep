@@ -17,15 +17,23 @@ library(mgcv)
 load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RData")
 ```
 
-```{r}
-model1<- gam(b_hourssleep ~ s(ndvi_100_smax_iqr, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = rural, na.action=na.omit )
-#plot(model1, las=1, ylab="Hours Slept", xlab= "Green space")
-#legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+#Exploratory analysis - Logistic regression
 
-summary(model1)
+```{r}
+par(mfrow=c(1,2))
+df <- data
+spline1 <- gam(as.numeric(b_hourssleep >=7)~ s(ndvi_100_amax_iqr, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + b_currentjob + b_jobhrsperweek + ct_HHinc + ct_lths , data = df, na.action=na.omit )
+plot(spline1, las=1, ylab="Sleep", xlab= "Green space")
+legend("topleft", c("Spline", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("Hours of Sleep >= 7", side=3, line=0.4, adj=-0.08, cex=0.9)
+
+spline2 <- gam(b_hourssleep ~ s(ndvi_100_amax_iqr, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + b_currentjob + b_jobhrsperweek + ct_HHinc + ct_lths , data = df, na.action=na.omit )
+plot(spline2, las=1, ylab="Sleep", xlab= "Green space")
+legend("topleft", c("Spline", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
+mtext ("Horus of Sleep", side=3, line=0.4, adj=-0.08, cex=0.9)
 ```
 
-#Exploratory analysis - Logistic regression
+#Model 1
 ```{r}
 df <- data
 df$hrssleep <- as.numeric(df$hrssleep_cat)
@@ -33,6 +41,7 @@ model1 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census, d
 summary(model1)
 ```
 
+#Model 2
 ```{r}
 df <- data 
 df$hrssleep <- as.numeric(df$hrssleep_cat)
@@ -41,13 +50,15 @@ summary(model2)
 
 ```
 
+#Model 3
 ```{r}
 df <- data 
 df$hrssleep <- as.numeric(df$hrssleep_cat)
-model3 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths, data = df, family = "binomial")
+model3 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_HHinc + ct_lths, data = df, family = "binomial")
 summary(model3)
 ```
 
+#Model 4 
 ```{r}
 df <- data
 df$hrssleep <- as.numeric(df$hrssleep_cat)
@@ -55,80 +66,77 @@ model4 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + 
 summary(model4)
 ```
 
+#Model 5
 ```{r}
 df <- data
-df$hrssleep <- as.numeric(df$hrssleep_cat)
-model5 <- glm(hrssleep ~ ndvi_100_smax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income, data = df, family = "binomial")
+#df$hrssleep <- as.numeric(df$hrssleep_cat)
+df$hrssleep <- as.numeric(df$b_hourssleep>=7)
+model5 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income, data = df, family = "binomial")
 summary(model5)
+
+#model5_OR <- exp(cbind(OR = coef(model5), confint(model5)))
 ```
 
-### OLD CODE AFTER THIS POINT
-
-
-
-
-
-#Full sample, PSS and MDI, 100m buffer
+#Model 6
 ```{r}
-par(mfrow = c(1,2))
-
-model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = data, na.action=na.omit )
-plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("PSS", side=3, line=0.4, adj=-0.08, cex=0.9)
-
-model2<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = data, na.action=na.omit )
-plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("MDI", side=3, line=0.4, adj=-0.08, cex=0.9)
-
-summary(model1)
+#df <- subset(data, data$b_hourssleep <= 10)
+df <- data
+df$hrssleep <- as.numeric(df$b_hourssleep >= 7 )
+model6 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + ct_HHinc + ct_lths, data = df, family = "binomial")
+summary(model6)
+model6_out <- exp(cbind(OR = coef(model6), confint(model6)))[2,]
+model6_out #OR excluding long sleepers 0.9186 CI: 0.8586,0.9825
 ```
 
-#Full sample, PSS, 100m buffer, Stratified by NSES
 ```{r}
-par(mfrow = c(1,3))
+df <- NSES1
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model6_NSES1 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + ct_lths, data = df, family = "binomial")
+#summary(model6_NSSE1)
+df <- NSES3
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model6_NSES3 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + ct_lths, data = df, family = "binomial")
+#summary(model6_NSES3)
 
+model6_out <- exp(cbind(OR = coef(model6), confint(model6)))[2,]
+model6_NSES1_out <- exp(cbind(OR = coef(model6_NSES1), confint(model6_NSES1)))[2,]
+model6_NSES3_out <- exp(cbind(OR = coef(model6_NSES3), confint(model6_NSES3)))[2,]
+                              
+out <- rbind(full_sample = model6_out, NSES1 = model6_NSES1_out, NSES3 = model6_NSES3_out)
+out
+#round((1-out)*100,2)  #convert to percentages for abstract
 
-model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES1, na.action=na.omit )
-#summary(model1)
-plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("Low NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
-
-model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income +  ct_lths , data = ctSES2, na.action=na.omit )
-#summary(model1)
-plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("Medium NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
-
-model1<- gam(pss_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES3, na.action=na.omit )
-#summary(model1)
-plot(model1, las=1, ylab="Perceived Stress Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("High NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
 ```
 
-#Full sample, MDI, 100m buffer, Stratified by NSES
 ```{r}
-par(mfrow = c(1,3))
+df <- urban
+df$hrssleep <- as.numeric(df$hrssleep_cat) 
+model6_urban <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + ct_HHinc + ct_lths, data = df, family = "binomial")
+summary(model6_urban)
 
+df <- rural
+df$hrssleep <- as.numeric(df$hrssleep_cat)
+model6_rural <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + ct_HHinc + ct_lths, data = df, family = "binomial")
+summary(model6_rural)
 
-model1<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES1, na.action=na.omit )
-#summary(model1)
-plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("Low NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
-
-model1<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income +  ct_lths , data = ctSES2, na.action=na.omit )
-#summary(model1)
-plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("Medium NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
-
-model1<- gam(b_mdi_score ~ s(ndvi_iqr_100, fx=TRUE, k=3) + ageatqstn + b_race_ethnic_census + b_educ + b_income + ct_lths , data = ctSES3, na.action=na.omit )
-#summary(model1)
-plot(model1, las=1, ylab="MDI Score", xlab= "Green space")
-legend("topleft", c("Spline ", "95%CI"), lty=1:2, box.lty=1, cex=0.9)
-mtext ("High NSES", side=3, line=0.4, adj=-0.08, cex=0.9)
 ```
+
+#Practice plotting 
+```{r}
+df = data
+df$hrssleep <- as.numeric(df$hrssleep_cat) 
+model <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_jobhrsperweek, data = df, family = "binomial")
+summary(model)
+newdata <- data.frame(ndvi_100_amax_iqr=seq(min(df$ndvi_100_amax_iqr), max(df$ndvi_100_amax_iqr),len=500), ageatqstn=seq(min(df$ageatqstn), max(df$ageatqstn),len=500), b_jobhrsperweek = seq(min(df$b_jobhrsperweek),max(df$b_jobhrsperweek), len=500))
+newdata$vs = predict(model, newdata, type="response")
+plot(hrssleep ~ ndvi_100_amax_iqr, data=df, col="steelblue")
+lines(vs ~ ndvi_100_amax_iqr, newdata, lwd=2)
+
+```
+
+```{r}
+df <- data[c('ageatqstn','b_jobhrsperweek', 'ct_HHinc', 'ct_lths', 'ndvi_100_amax_iqr', 'b_hourssleep')]
+cor(df)
+
+```
+
