@@ -67,6 +67,9 @@ data_final <- get_ndvi_iqr_quartiles(data_final)
 data_final <- data_final %>%
   mutate(ct_HHinc_quantile = ntile(ct_HHinc, 3))
 
+#Add binary outcome measure
+data_final$hrssleep <- as.numeric(data_final$hrssleep_cat)
+
 #turn variables into factors 
 factor_vars <- c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob", names(data_final[grep("quantile", names(data_final))]))
 data_final[factor_vars] <- lapply(data_final[factor_vars], factor)

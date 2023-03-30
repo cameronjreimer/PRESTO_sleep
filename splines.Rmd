@@ -140,3 +140,22 @@ cor(df)
 
 ```
 
+```{r}
+#model6 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + ct_HHinc + ct_lths, data = df, family = "binomial")
+x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'ct_HHinc', 'ct_lths')
+ndvi_measure = 'amax'
+buffer = 100
+y = 'hrssleep'
+
+glmfun<-function(data,y,buffer,x, ndvi_measure){
+  # format function call 
+  xname = paste(c(paste0("ndvi_",as.character(buffer), "_", as.character(ndvi_measure),"_iqr"),x) , collapse = " + ")
+  formula1<-as.formula(paste(y,"~",xname))
+  glm.fit<-do.call("glm",list(data=quote(data),family = 'binomial', formula1))
+  out <- exp(cbind(OR = coef(glm.fit), confint(glm.fit)))[2,]
+  return(out)
+}
+
+tmp <- glmfun(df,y, buffer, x, ndvi_measure)
+#summary(tmp)
+```
