@@ -26,13 +26,8 @@ data_full <- read_sas("ndvi_mental_001.sas7bdat")
 years <- 2012:2019
 buffers <- c(50,100,250,500)
 
-#format exercise data 
-#FOR FUTURE REFERENCE ###### If all exercise types are NA in one row, final value is NA. If at least one is NOT NA, all other NAs in that row should be 0. TAKE THE SUM OF ALL non-NAs.
-#data_full$exercise <- data_full$b_walkexer + data_full$b_bike + data_full$b_jogswimraq + data_full$b_aerobics + data_full$b_freeweights + data_full$b_yoga
-
 #select important columns
 data = data_full[c("StudyID", "Country", "ageatqstn", "b_race_ethnic_census", "b_educ", "b_income", "ct_HHinc", "ct_lths", "ct_urban", "pss_score", "b_mdi_score",  "b_finisheddate", "b_hourssleep", "b_currentjob", "b_jobhrsperweek", generate_all_ndvi_colnames(years,buffers))]
-rm(data_full)
 
 #get NDVI - This may take a while
 data <- add_ndvi(data, id_colname = "StudyID", date_colname = "b_finisheddate", buffers=buffers)
@@ -41,11 +36,40 @@ data <- add_ndvi(data, id_colname = "StudyID", date_colname = "b_finisheddate", 
 data <- add_urban_cat(data)
 #add binary outcome 
 data$hrssleep_cat <- data$b_hourssleep >= 7 
+
+#format exercise composite 
+exer_names <- c('b_walkwork', 'b_walkexer', 'b_walktrans', 'b_bike', 'b_freeweights', 'b_jogswimraq', 'b_aerobics', 'b_garden') #not including 'b_yoga'
+pa_old <- as.matrix(data_full[exer_names])
+pa_new <- matrix(NA, nrow = dim(pa_old)[1], ncol = dim(pa_old)[2])
+pa_adjusted <- matrix(NA, nrow = dim(pa_old)[1], ncol = dim(pa_old)[2])
+colnames(pa_adjusted) <- exer_names
+
+scaling_factors <- c(2.0, 3.8, 2.5, 7.5, 4.5, 7.0, 6.5, 2.5) #2.5 for b_yoga
+
+for(i in 1:dim(pa_new)[2]){
+ pa_new[,i] <- case_when(
+  pa_old[,i] == 1 ~ 0,
+  pa_old[,i] == 2 ~ 0.5,
+  pa_old[,i] == 3 ~ 1,
+  pa_old[,i] == 4 ~ 2,
+  pa_old[,i] == 5 ~ 3.5,
+  pa_old[,i] == 6 ~ 5.5,
+  pa_old[,i] == 7 ~ 7,
+  #TRUE ~ 0         
+) 
+ pa_adjusted[,i] <- pa_new[,i] * scaling_factors[i]
+}
+
+data$b_totalmet <- apply(pa_adjusted, 1, sum)
+
+
+rm(data_full)
 ```
 
 ```{r Check for missingness}
 #remove missing data 
 data_final = na.omit(data)
+dropped <- subset(data, !(data$StudyID %in% data_final$StudyID))
 
 #check counts of missing data 
 missing_counts <- colMeans(is.na(data)) * dim(data)[1]
@@ -73,6 +97,8 @@ data_final$hrssleep <- as.numeric(data_final$hrssleep_cat)
 #turn variables into factors 
 factor_vars <- c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob", names(data_final[grep("quantile", names(data_final))]))
 data_final[factor_vars] <- lapply(data_final[factor_vars], factor)
+
+dropped[c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob")] <- lapply(dropped[c("b_race_ethnic_census", "b_educ", "b_income", "ct_urban_cat", "b_currentjob")], factor)
 ```
 
 ```{r Create subsets}
@@ -98,6 +124,8 @@ rm(data_final)
 
 ```{r Export data}
 save(data, urban, rural, NSES1, NSES2, NSES3, NSES1_urban, NSES2_urban, NSES3_urban, NSES1_rural, NSES2_rural, NSES3_rural, file = "C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RData")
+
+save(dropped, file = "C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/dropped_sleep.RData")
 #write_csv(data_final, "C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed.csv")
 ```
 
