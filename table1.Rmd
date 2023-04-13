@@ -14,6 +14,7 @@ library(dplyr)
 library(labelled)
 #load in data
 load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RData")
+load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/dropped_sleep.RData")
 ```
 
 ```{r}
@@ -67,3 +68,45 @@ write.csv(table1t, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO_sleep/tabl
 table1t <- print(tab1_100_overall, exact = "stage", quote = FALSE, noSpaces = TRUE, printToggle = FALSE, varLabels = TRUE, dropEqual = TRUE)
 write.csv(table1t, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO_sleep/table1_overall.csv")
 ```
+
+
+#Figure 1.5 - missing data 
+```{r}
+# Rename Factors
+dropped$race_ethnic_factors = as.factor(dropped$b_race_ethnic_census)
+levels(dropped$race_ethnic_factors) <- c("Hispanic/Latina/Latinx", "Mixed race, Non-hispanic", "Black, Non-Hispanic", "Asian/Pac Islander, Non-Hispanic", "American Indian/Alaskan Native, Non-Hispanic", "White, Non-Hispanic", "Other race, non-hispanic/missing race")
+dropped$income_factors = as.factor(dropped$b_income)
+levels(dropped$income_factors) <- c("<$15,000", "$15,000-$24,999", "$25,000-$49,999", "$50,000-$74,999", "$75,000-$99,999", "$100,000-$124.999", "$125,000-$149,999", "$150,000-$199,999", ">=$200,000")
+dropped$educ_factors = as.factor(dropped$b_educ)
+levels(dropped$educ_factors) <- c("Less than 12th grade", "High school degree/GED", "Some college/vocational school", "College degree (4 years)", "Graduate degree")
+# Rename Variable labels 
+var_label(dropped$ageatqstn) <- "Age"
+var_label(dropped$race_ethnic_factors) <- "Race/ethnicity categories-census"
+var_label(dropped$income_factors) <- "Income (household)"
+var_label(dropped$educ_factors) <- "Education"
+var_label(dropped$ct_HHinc) <- "Census tract - Income (household)"
+var_label(dropped$ct_lths) <- "Census tract - LTHS"
+var_label(dropped$ct_urban_cat) <- "Census tract - Urban"
+var_label(dropped$pss_score) <- "PSS"
+var_label(dropped$b_mdi_score) <- "MDI" 
+var_label(dropped$b_hourssleep) <- "Hours slept / night"
+var_label(dropped$b_currentjob) <- "Currently Employed"
+var_label(dropped$b_jobhrsperweek) <- "Hours worked /week"
+#var_label(dropped$exercise) <- "Hours of exercise / week"
+var_label(dropped$hrssleep_cat) <- ">= 7hrs of sleep/night"
+
+# Assign variables for table one 
+myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "exercise", "b_currentjob", "b_jobhrsperweek", "hrssleep_cat")
+catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat", "b_currentjob", "hrssleep_cat")
+
+dropped_overall <- CreateTableOne(vars = myVars , data = dropped, factorVars = catVars, test = FALSE)
+print(dropped_overall, formatOptions = list(big.mark = ","), varLabels = TRUE, dropEqual = TRUE)
+```
+
+```{r}
+#Export
+dropped_out <- print(dropped_overall, exact = "stage", quote = FALSE, noSpaces = TRUE, printToggle = FALSE, varLabels = TRUE, dropEqual = TRUE)
+write.csv(dropped_out, file="C:/Users/camer/OneDrive/Documents/SPH/PRESTO_sleep/dropped_overall.csv")
+```
+
+
