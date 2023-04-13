@@ -134,3 +134,87 @@ ggplot(data=figure2, aes(x = buffer, y = Mean, color=quantile))+
   theme(legend.position="bottom", legend.key.width=unit(1,"in"),legend.title = element_blank(),legend.text = element_text(colour="black", size = 11))  
   
 ```
+
+
+#Figure 2c - three rows: (Full, Urban, Rural), four columns: (Full, NSES1, NSES2, NSES3), three models in each: (amax, smax, smean)
+
+#model fits 
+```{r}
+#fit models 
+x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'ct_HHinc', 'ct_lths')
+buffers <- c(50, 100, 250, 500)
+ndvi_measure = c('amax', 'smax', 'smean') 
+y = 'hrssleep'
+
+figure3_full <- as.data.frame(matrix(nrow=1, ncol=3))
+colnames(figure3_full) <- c("Mean", "Lower_CI", "Upper_CI")
+datasets <- list(data, NSES1, NSES2, NSES3)
+for(j in 1:length(ndvi_measure)){
+  for(i in 1:length(datasets)){
+      tmp <- suppressWarnings(glmfun(data=datasets[[i]], y, buffers[2], x, ndvi_measure[j]))
+      figure3_full <- rbind(figure3_full, tmp)
+      rm(tmp)
+  }
+}
+
+figure3_urban <- as.data.frame(matrix(nrow=1, ncol=3))
+colnames(figure3_urban) <- c("Mean", "Lower_CI", "Upper_CI")
+datasets <- list(urban, NSES1_urban, NSES2_urban, NSES3_urban)
+for(j in 1:length(ndvi_measure)){
+  for(i in 1:length(datasets)){
+      tmp <- suppressWarnings(glmfun(data=datasets[[i]], y, buffers[2], x, ndvi_measure[j]))
+      figure3_urban <- rbind(figure3_urban, tmp)
+      rm(tmp)
+  }
+}
+
+figure3_rural <- as.data.frame(matrix(nrow=1, ncol=3))
+colnames(figure3_rural) <- c("Mean", "Lower_CI", "Upper_CI")
+datasets <- list(rural, NSES1_rural, NSES2_rural, NSES3_rural)
+for(j in 1:length(ndvi_measure)){
+  for(i in 1:length(datasets)){
+      tmp <- suppressWarnings(glmfun(data=datasets[[i]], y, buffers[2], x, ndvi_measure[j]))
+      figure3_rural <- rbind(figure3_rural, tmp)
+      rm(tmp)
+  }
+}
+
+figure3 <- rbind(figure3_full, figure3_urban, figure3_rural)
+
+figure3 <- na.omit(figure3)
+```
+
+```{r}
+#add group categories
+figure3$buffer <- c(rep(c('Full', 'NSES1', 'NSES2', 'NSES3'),9))
+figure3$quantile <- rep(c(rep("Annual Max", 4), rep("Seasonal Max", 4), rep("Seasonal Mean", 4)),3)
+figure3$sample <- c(rep('Urban + Rural',12), rep('Urban',12), rep('Rural',12))
+#factorize
+figure3$sample <- factor(figure3$sample, levels = c('Urban + Rural', 'Urban', 'Rural'))
+figure3$buffer <- factor(figure3$buffer, levels = c('Full', 'NSES1', 'NSES2', 'NSES3'))
+figure3$quantile <- factor(figure3$quantile, levels = c('Annual Max', 'Seasonal Max', 'Seasonal Mean'))
+figure3
+```
+
+```{r}
+pd = position_dodge(.6)    ### How much to jitter the points on the plot
+ggplot(data=figure3, aes(x = buffer, y = Mean, color=quantile))+
+  geom_line(aes(linetype = quantile), linewidth=0.5, position = pd)+
+  geom_point(aes(colour = factor(quantile)), size=2.5, position = pd)+
+  geom_errorbar(aes(ymin=Lower_CI, ymax=Upper_CI, linetype=quantile, col=quantile), linewidth=0.8, position = pd)+
+  xlab('')+ ylab("")+
+  
+  #This line divides the graph in 4 according to time of measurement
+  facet_wrap(~sample,strip.position="left",nrow=9,scales = "free_y")+
+  geom_hline(yintercept =1, linetype=1)+
+  theme(plot.title=element_text(size=16,face="bold"),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.text.x=element_text(face="bold"),
+        axis.title=element_text(size=12,face="bold"),
+        strip.text.y = element_text(hjust=0,vjust = 1,angle=180,face="bold"))+
+  theme_bw()+
+  guides(col=guide_legend(ncol=2))+
+  theme(legend.position="bottom", legend.key.width=unit(1,"in"),legend.title = element_blank(),legend.text = element_text(colour="black", size = 11))  
+  
+```
