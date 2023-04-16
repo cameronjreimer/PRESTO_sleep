@@ -38,11 +38,11 @@ var_label(data$b_mdi_score) <- "MDI"
 var_label(data$b_hourssleep) <- "Hours slept / night"
 var_label(data$b_currentjob) <- "Currently Employed"
 var_label(data$b_jobhrsperweek) <- "Hours worked /week"
-#var_label(data$exercise) <- "Hours of exercise / week"
+var_label(data$b_totalmet) <- "Hours of exercise / week"
 var_label(data$hrssleep_cat) <- ">= 7hrs of sleep/night"
 
 # Assign variables for table one 
-myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "exercise", "b_currentjob", "b_jobhrsperweek", "hrssleep_cat")
+myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "b_currentjob", "b_jobhrsperweek", "b_totalmet", "hrssleep_cat")
 catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat", "b_currentjob", "hrssleep_cat")
 ```
 
@@ -92,11 +92,11 @@ var_label(dropped$b_mdi_score) <- "MDI"
 var_label(dropped$b_hourssleep) <- "Hours slept / night"
 var_label(dropped$b_currentjob) <- "Currently Employed"
 var_label(dropped$b_jobhrsperweek) <- "Hours worked /week"
-#var_label(dropped$exercise) <- "Hours of exercise / week"
+var_label(dropped$b_totalmet) <- "Hours of exercise / week"
 var_label(dropped$hrssleep_cat) <- ">= 7hrs of sleep/night"
 
 # Assign variables for table one 
-myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "exercise", "b_currentjob", "b_jobhrsperweek", "hrssleep_cat")
+myVars <- c("ageatqstn", "race_ethnic_factors", "educ_factors", "income_factors", "ct_HHinc", "ct_lths", "ct_urban_cat", "b_hourssleep", "b_currentjob", "b_jobhrsperweek", "b_totalmet", "hrssleep_cat")
 catVars <- c( "race_ethnic_factors", "educ_factors",  "income_factors", "ct_urban_cat", "b_currentjob", "hrssleep_cat")
 
 dropped_overall <- CreateTableOne(vars = myVars , data = dropped, factorVars = catVars, test = FALSE)
