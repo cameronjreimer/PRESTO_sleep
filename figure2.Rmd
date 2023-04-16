@@ -20,7 +20,7 @@ load("C:/Users/camer/OneDrive/Documents/SPH/PRESTO/data/data_processed_sleep.RDa
 ##model fits 
 ```{r}
 #fit models 
-x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'ct_HHinc', 'ct_lths')
+x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'b_totalmet', 'ct_HHinc', 'ct_lths')
 buffers <- c(50, 100, 250, 500)
 datasets <- list(NSES1, NSES2, NSES3, NSES1_urban, NSES2_urban,NSES3_urban, NSES1_rural, NSES2_rural, NSES3_rural)
 ndvi_measure = 'amax'
@@ -79,7 +79,7 @@ ggplot(data=figure, aes(x = buffer, y = Mean, color=quantile))+
 ##model fits 
 ```{r}
 #fit models 
-x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'ct_HHinc', 'ct_lths')
+x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'b_totalmet', 'ct_HHinc', 'ct_lths')
 buffers <- c(50, 100, 250, 500)
 datasets <- list(data, rural, urban)
 ndvi_measure = c('amax', 'smax', 'smean') 
@@ -141,7 +141,7 @@ ggplot(data=figure2, aes(x = buffer, y = Mean, color=quantile))+
 #model fits 
 ```{r}
 #fit models 
-x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'ct_HHinc', 'ct_lths')
+x = c('ageatqstn', 'b_race_ethnic_census', 'b_currentjob', 'b_jobhrsperweek', 'b_educ', 'b_income', 'b_totalmet', 'ct_HHinc', 'ct_lths')
 buffers <- c(50, 100, 250, 500)
 ndvi_measure = c('amax', 'smax', 'smean') 
 y = 'hrssleep'

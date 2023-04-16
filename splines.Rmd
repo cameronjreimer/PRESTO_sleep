@@ -71,7 +71,7 @@ summary(model4)
 df <- data
 #df$hrssleep <- as.numeric(df$hrssleep_cat)
 df$hrssleep <- as.numeric(df$b_hourssleep>=7)
-model5 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income, data = df, family = "binomial")
+model5 <- glm(hrssleep ~ ndvi_100_amax_iqr + ageatqstn + b_race_ethnic_census + b_currentjob + b_jobhrsperweek + b_educ + b_income + b_totalmet, data = df, family = "binomial")
 summary(model5)
 
 #model5_OR <- exp(cbind(OR = coef(model5), confint(model5)))
