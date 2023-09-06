@@ -78,7 +78,7 @@ missing_counts <- append(missing_counts, dim(data)[1] - dim(data_final)[1])
 miss <- as.matrix(missing_counts)
 colnames(miss) <- "count"
 rownames(miss)[c(dim(miss)[1]-1,dim(miss)[1])] <- c("All NDVI", "Total")
-#miss
+miss
 rm(data)
 ```
 
